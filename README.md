@@ -12,70 +12,128 @@ CLC 2025 Project
 
 ## Project Overview
 
-This project focuses on designing and implementing a **microservices-based storage and order management system** using Java and the Springboot. We will **rebuild and modernize a previously developed storage system project** that was originally implemented as part of our
-bachelor's C# course.
+This project focuses on designing and operating a cloud-native system on Kubernetes.
 
-The goal is to reuse the **domain concept and functional scope** of that storage system while re-implementing it as a **cloud-native microservices architecture**. By decomposing the system into independently deployable services and orchestrating them with Kubernetes, we aim to demonstrate practical principles of distributed systems, service boundaries, and containerized deployment.
+To provide a realistic foundation, we will implement a **minimal microservices-based storage and order management application**. This minimal application serves
+only to demonstrate cloud-native infrastructure concepts, not as a feature-complete business system.
 
-Each microservice will own its **persistence layer and database schema**, and communication between services will be limited to **well-defined REST APIs** to avoid shared data models and tight coupling.
+The core objective is to **design, deploy, and operate a cloud-native architecture** that demonstrates key principles such as:
+
+* Containerized microservices on Kubernetes
+* Autoscaling and resilience under load
+* Observability and system transparency
+* Self-healing behavior and fault tolerance
+* Declarative and automated deployment practices
+
+The system will be implemented in **Java with Spring Boot**, containerized using Docker, and orchestrated on **Kubernetes (kind)**.
 
 ---
 
 ## Background: Existing System
 
-In a previous course project, a storage and order management system was implemented in **C#**, with multiple user interfaces built on top of a shared backend. The system covered typical business functionality such as:
+In a previous bachelor-level course, a storage and order management system was implemented in **C#**, focusing mainly on application logic and data persistence.
 
-* Management of master data (e.g. products, storage units/locations)
-* Adding and removing Items from storage
-* Persisting of storage states to a database
+For this project:
 
-For this project, the **existing implementation will not be reused directly**. Instead, the system will be **redesigned and reimplemented in Java**, following microservices principles and modern DevOps practices.
+* The existing implementation will not be reused
+* Only the **domain idea** (storage, orders, inventory) will be carried over
+* The system will be redesigned to fit the requirements of a cloud-native architecture
+
+---
+
+### Key Cloud-Native Concepts to Be Implemented
+
+* **Autoscaling**
+  * Horizontal Pod Autoscaler (HPA) to scale services under load
+* **Self-Healing & Resilience**
+  * Kubernetes-native self-healing (restarts, rescheduling)
+  * Application-level resilience patterns (retries, timeouts, circuit breakers)
+* **Observability**
+  * Metrics collection with **Prometheus**
+  * Visualization and dashboards using **Grafana**
+* **Cloud-Native Deployment Practices**
+  * Declarative Kubernetes manifests
+  * Git-based configuration and reproducible deployments (GitOps-oriented workflow)
+* **Fault and Stability Testing**
+  * Controlled failure scenarios to demonstrate resilience and recovery behavior
 
 ---
 
 ## What We Will Develop
 
-We will design and implement a system consisting of **approximately four microservices**, plus an API Gateway and a simple web frontend.
+### Minimal Microservices Application
 
-### Microservices
+The system will consist of **approximately four lightweight microservices**, an API Gateway, and a simple frontend.
 
-* **Master Data Service**
-  Responsible for managing core reference data (e.g. products, customers, or other domain-specific master data).
+The services are intentionally small and simple, providing just enough functionality to:
 
-* **Order Service**
-  Handles the creation, processing, and querying of orders. This service represents the central business workflow of the system.
+* Generate load
+* Exchange data between services
+* Observe scaling, failures, and recovery behavior
 
-* **Inventory Service**
-  Managing stock levels for products.
+#### Microservices
 
-* **API Gateway**
-  Acts as the single entry point for the frontend, routing incoming requests to the appropriate backend services.
+* **Master Data Service**  
+  Manages basic reference data (e.g. products).
 
-No dedicated user authentication or login service will be implemented, as authentication is not required to demonstrate the architectural goals of this project.
+* **Order Service**  
+  Provides simple order creation and querying to simulate workflows and load.
+
+* **Inventory Service**  
+  Manages basic stock levels and inventory changes.
+
+* **API Gateway**  
+  Serves as a single entry point for the frontend and routes requests to backend services.
+
+No authentication or advanced business logic will be implemented, as these are not required for demonstrating cloud-native behavior.
 
 ---
 
 ### Frontend
 
-A **simple web-based frontend** will be developed to interact with the backend services via the API Gateway. The focus is on functionality and integration rather than visual design or advanced UI features.
+A **minimal web frontend** will be provided to:
+
+* Trigger requests
+* Generate load
+* Interact with the API Gateway
 
 ---
 
-### Containerization and Orchestration
+## Containerization and Kubernetes Platform
 
-* Each microservice will be **containerized using Docker**.
-* The system will be orchestrated using **Kubernetes**, running locally via **kind (Kubernetes in Docker)**.
-* No external or commercial cloud infrastructure is required; all deployments will run in a local Kubernetes environment.
+* Each service will be **containerized using Docker**
+* The full system will run on **Kubernetes via kind**
+* Kubernetes manifests will define:
+  * Deployments
+  * Services
+  * Autoscaling rules
+  * Health checks and resource limits
+
+The platform setup is designed to **simulate real-world cloud-native deployments**, while remaining fully local and reproducible.
 
 ---
 
-### CI/CD Pipeline
+## Observability and Monitoring
 
-A GitHub Actions–based CI pipeline will be set up to:
+To ensure traceability and transparency of system behavior:
 
-* Build and test all services
-* Perform basic quality checks
-* Build Docker images for the microservices
+* **Prometheus** will be used to collect metrics (CPU, memory, request rates, scaling events)
+* **Grafana** will be used to visualize metrics and system behavior
+* Metrics will be used to:
+  * Demonstrate autoscaling under load
+  * Observe recovery after failures
+  * Analyze system stability
+
+---
+
+## CI/CD and Deployment Workflow
+
+A GitHub Actions–based pipeline will be established to:
+
+* Build and test services
+* Build Docker images
+* Validate Kubernetes manifests
+* Support a **GitOps-style workflow**, where infrastructure changes are driven via version-controlled configuration
 
 ---
 
@@ -87,45 +145,49 @@ A GitHub Actions–based CI pipeline will be set up to:
 
 ## Milestones
 
-| Date           | Milestone                                | Status     |
-| :------------- | :--------------------------------------- | :--------- |
-| **15.12.2025** | Proposal & Repository Setup              | ✅ Done     |
-| **20.12.2025** | Local Environment Setup & API Definition | 📅 Planned |
-| **04.01.2026** | Core Service Implementation              | 📅 Planned |
-| **08.01.2026** | API Gateway Setup                        | 📅 Planned |
-| **12.01.2026** | Dockerization & CI Pipeline Setup        | 📅 Planned |
-| **19.01.2026** | Integration & System Testing             | 📅 Planned |
-| **26.01.2026** | Code Freeze & Documentation              | 📅 Planned |
-| **02.02.2026** | Final Presentation                       | 📅 Planned |
+| Date           | Milestone                                              | Status     |
+|----------------|--------------------------------------------------------|------------|
+| **15.12.2025** | Proposal & Repository Setup                             | ✅ Done     |
+| **20.12.2025** | Kubernetes Environment & Base Infrastructure Setup     | 📅 Planned |
+| **04.01.2026** | Minimal Microservices Implementation                   | 📅 Planned |
+| **08.01.2026** | API Gateway & Frontend Integration                     | 📅 Planned |
+| **12.01.2026** | Dockerization & CI/CD Pipeline                          | 📅 Planned |
+| **19.01.2026** | Autoscaling, Observability & Resilience Implementation | 📅 Planned |
+| **26.01.2026** | Fault Scenarios, Testing & Documentation                | 📅 Planned |
+| **02.02.2026** | Final Presentation & Demonstration                     | 📅 Planned |
 
 ---
 
 ## Distribution of Work and Responsibilities
 
-*Disclaimer:* While the following distribution outlines primary responsibilities, major architectural decisions, service boundaries, and code reviews will be handled collaboratively by the entire team.
+*Disclaimer:* Architectural decisions, infrastructure design, and evaluations will be carried out collaboratively. The roles below define primary focus areas.
 
-### 👤 Selina – Feature & Gateway Lead
+### 👤 Selina – Application & Gateway Focus
 
-* API Gateway Configuration: Design and implementation of routing and request handling between frontend and backend services.
-* Master Data Service: Primary responsibility for implementation, API design, and persistence of the master data service.
-* Frontend Integration: Development and integration of the simple web frontend using the API Gateway.
+* Master Data Service implementation (minimal functionality)
+* API Gateway configuration and request routing
+* Frontend setup for triggering requests and load
+* Support for observability integration at application level
 
-### 👤 Robin – Containerization & Orchestration Lead
+### 👤 Robin – Kubernetes & Cloud Infrastructure Focus
 
-* Inventory Service: Primary responsibility for implementation, API design, and persistence of the inventory-related domain service.
-* Container Strategy: Definition of a consistent container architecture, base images, and build conventions.
-* Service Containerization & Orchestration: Creation of Dockerfiles and Kubernetes manifests, and operation of the system locally using kind.
+* Inventory Service implementation (minimal functionality)
+* Kubernetes manifests (Deployments, Services, HPA)
+* Autoscaling configuration and load testing scenarios
+* Local Kubernetes cluster operation using kind
 
-### 👤 Jonas – DevOps & CI Lead
+### 👤 Jonas – DevOps, CI/CD & Observability Focus
 
-* Order Service: Primary responsibility for implementation, API design, and persistence of the order management service.
-* Environment Setup: Initialization of the GitHub repository and configuration of the Java/Maven development environment.
-* CI Pipeline & Quality Assurance: Setup of GitHub Actions workflows for building, testing, Docker image creation, and static analysis.
+* Order Service implementation (minimal functionality)
+* GitHub Actions CI/CD pipeline
+* Prometheus and Grafana setup
+* Monitoring dashboards and metric validation
 
 ---
 
 ### 🤝 Shared Responsibilities
 
-* Service Design and Integration
+* Cloud-native architecture design
+* Resilience and self-healing strategy
 * Documentation
-* Preparation of the final presentation
+* Preparation of final demonstration and presentation
