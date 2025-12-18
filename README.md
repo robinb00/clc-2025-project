@@ -14,8 +14,7 @@ CLC 2025 Project
 
 This project focuses on designing and operating a cloud-native system on Kubernetes.
 
-To provide a realistic foundation, we will implement a **minimal microservices-based storage and order management application**. This minimal application serves
-only to demonstrate cloud-native infrastructure concepts, not as a feature-complete business system.
+To provide a realistic foundation, we will deploy and operate **a minimal microservices-based storage and order management application**. This minimal application serves only to demonstrate cloud-native infrastructure concepts, not as a feature-complete business system.
 
 The core objective is to **design, deploy, and operate a cloud-native architecture** that demonstrates key principles such as:
 
@@ -35,9 +34,9 @@ In a previous bachelor-level course, a storage and order management system was i
 
 For this project:
 
-* The existing implementation will not be reused
-* Only the **domain idea** (storage, orders, inventory) will be carried over
-* The system will be redesigned to fit the requirements of a cloud-native architecture
+* **No code reuse**: The existing implementation will not be reused
+* **Minimal Logic**: We only use the abstract domain idea to define request flows
+* **Focus**: The system will be redesigned to fit the requirements of a cloud-native architecture
 
 ---
 
