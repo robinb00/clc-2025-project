@@ -140,16 +140,16 @@ A GitHub Actions–based pipeline will be established to:
 
 ## Milestones
 
-| Date           | Milestone                                              | Status     |
-|----------------|--------------------------------------------------------|------------|
-| **15.12.2025** | Proposal & Repository Setup                             | ✅ Done     |
-| **20.12.2025** | Kubernetes Environment & Base Infrastructure Setup     | 📅 Planned |
-| **04.01.2026** | Minimal Microservices Implementation                   | 📅 Planned |
-| **08.01.2026** | API Gateway & Frontend Integration                     | 📅 Planned |
-| **12.01.2026** | Dockerization & CI/CD Pipeline                          | 📅 Planned |
-| **19.01.2026** | Autoscaling, Observability & Resilience Implementation | 📅 Planned |
-| **26.01.2026** | Fault Scenarios, Testing & Documentation                | 📅 Planned |
-| **02.02.2026** | Final Presentation & Demonstration                     | 📅 Planned |
+| Date           | Milestone                                          | Status     |
+|----------------|----------------------------------------------------|------------|
+| **15.12.2025** | Proposal & Repository Setup                        | ✅ Done     |
+| **20.12.2025** | Kubernetes Environment & Base Infrastructure Setup | 📅 Planned |
+| **04.01.2026** | Minimal Microservices Implementation               | 📅 Planned |
+| **08.01.2026** | API Gateway & Frontend Integration                 | 📅 Planned |
+| **12.01.2026** | Dockerization & CI/CD Pipeline                     | 📅 Planned |
+| **19.01.2026** | Observability & Resilience Implementation          | 📅 Planned |
+| **26.01.2026** | Fault Scenarios, Testing & Documentation           | 📅 Planned |
+| **02.02.2026** | Final Presentation & Demonstration                 | 📅 Planned |
 
 ---
 
