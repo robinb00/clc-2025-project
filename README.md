@@ -42,8 +42,6 @@ For this project:
 
 ### Key Cloud-Native Concepts to Be Implemented
 
-* **Autoscaling**
-  * Horizontal Pod Autoscaler (HPA) to scale services under load
 * **Self-Healing & Resilience**
   * Kubernetes-native self-healing (restarts, rescheduling)
   * Application-level resilience patterns (retries, timeouts, circuit breakers)
@@ -53,8 +51,6 @@ For this project:
 * **Cloud-Native Deployment Practices**
   * Declarative Kubernetes manifests
   * Git-based configuration and reproducible deployments (GitOps-oriented workflow)
-* **Fault and Stability Testing**
-  * Controlled failure scenarios to demonstrate resilience and recovery behavior
 
 ---
 
