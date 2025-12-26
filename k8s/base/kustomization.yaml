@@ -1,3 +1,5 @@
+namespace: storage-system
+
 resources:
   - api-gateway/deployment.yaml
   - api-gateway/service.yaml
@@ -7,3 +9,17 @@ resources:
   - order-service/service.yaml
   - inventory-service/deployment.yaml
   - inventory-service/service.yaml
+
+patches:
+  - target:
+      kind: Deployment
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: not-used
+      spec:
+        template:
+          spec:
+            imagePullSecrets:
+              - name: ghcr-credentials
