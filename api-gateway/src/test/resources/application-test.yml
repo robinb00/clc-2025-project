@@ -1,0 +1,18 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: master-data
+          uri: http://localhost:${wiremock.server.port}
+          predicates:
+            - Path=/products/**
+
+        - id: order
+          uri: http://localhost:${wiremock.server.port}
+          predicates:
+            - Path=/orders/**
+
+        - id: inventory
+          uri: http://localhost:${wiremock.server.port}
+          predicates:
+            - Path=/inventory/**
