@@ -1,6 +1,8 @@
 # ---------- build stage ----------
 FROM maven:3.9.9-eclipse-temurin-21 AS builder
 
+LABEL org.opencontainers.image.source=https://github.com/robinb00/clc-2025-project
+
 WORKDIR /build
 
 COPY pom.xml .
