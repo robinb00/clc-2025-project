@@ -1,14 +1,20 @@
 namespace: storage-system
 
 resources:
-  - ../../base
+- ../../base
 
 images:
-  - name: ghcr.io/robinb00/api-gateway
-    newTag: latest
-  - name: ghcr.io/robinb00/master-data-service
-    newTag: latest
-  - name: ghcr.io/robinb00/order-service
-    newTag: latest
-  - name: ghcr.io/robinb00/inventory-service
-    newTag: latest
+- name: ghcr.io/robinb00/api-gateway
+  newName: ghcr.io/robinb00/api-gateway
+  newTag: 6277c696fd7f472a0a4ec6bac056991067724d48
+- name: ghcr.io/robinb00/inventory-service
+  newName: ghcr.io/robinb00/inventory-service
+  newTag: 6277c696fd7f472a0a4ec6bac056991067724d48
+- name: ghcr.io/robinb00/master-data-service
+  newName: ghcr.io/robinb00/master-data-service
+  newTag: 6277c696fd7f472a0a4ec6bac056991067724d48
+- name: ghcr.io/robinb00/order-service
+  newName: ghcr.io/robinb00/order-service
+  newTag: 6277c696fd7f472a0a4ec6bac056991067724d48
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
