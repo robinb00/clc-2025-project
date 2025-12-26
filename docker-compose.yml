@@ -1,10 +1,9 @@
-version: '3.9'
-
 networks:
   microservices-network:
     driver: bridge
 
 services:
+  # ---------- API Gateway ----------
   api-gateway:
     build:
       context: .
@@ -22,6 +21,7 @@ services:
       ORDER_SERVICE_URL: "http://order-service:8080"
       INVENTORY_SERVICE_URL: "http://inventory-service:8080"
 
+  # ---------- Master Data Service ----------
   master-data-service:
     build:
       context: .
@@ -30,7 +30,11 @@ services:
       - "8081:8080"
     networks:
       - microservices-network
+    environment:
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
+      MANAGEMENT_ENDPOINT_WEB_EXPOSURE_INCLUDE: "*"
 
+  # ---------- Order Service ----------
   order-service:
     build:
       context: .
@@ -39,7 +43,11 @@ services:
       - "8082:8080"
     networks:
       - microservices-network
+    environment:
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
+      MANAGEMENT_ENDPOINT_WEB_EXPOSURE_INCLUDE: "*"
 
+  # ---------- Inventory Service ----------
   inventory-service:
     build:
       context: .
@@ -48,3 +56,29 @@ services:
       - "8083:8080"
     networks:
       - microservices-network
+    environment:
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
+      MANAGEMENT_ENDPOINT_WEB_EXPOSURE_INCLUDE: "*"
+
+  # ---------- Prometheus ----------
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    networks:
+      - microservices-network
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  # ---------- Grafana ----------
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - microservices-network
+    depends_on:
+      - prometheus
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin

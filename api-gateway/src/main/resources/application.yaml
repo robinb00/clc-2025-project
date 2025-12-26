@@ -1,5 +1,6 @@
 server:
   port: 8080
+  address: 0.0.0.0
 
 spring:
   application:
@@ -23,4 +24,8 @@ spring:
             uri: http://localhost:8083
             predicates:
               - Path=/inventory/**
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
