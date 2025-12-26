@@ -1,0 +1,14 @@
+namespace: storage-system
+
+resources:
+  - ../../base
+
+images:
+  - name: ghcr.io/robinb00/api-gateway
+    newTag: latest
+  - name: ghcr.io/robinb00/master-data-service
+    newTag: latest
+  - name: ghcr.io/robinb00/order-service
+    newTag: latest
+  - name: ghcr.io/robinb00/inventory-service
+    newTag: latest

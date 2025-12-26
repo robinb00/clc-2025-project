@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: master-data-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: master-data-service
+  template:
+    metadata:
+      labels:
+        app: master-data-service
+    spec:
+      containers:
+        - name: master-data-service
+          image: ghcr.io/robinb00/master-data-service
+          ports:
+            - containerPort: 8080
