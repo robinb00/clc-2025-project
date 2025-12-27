@@ -2,6 +2,10 @@ namespace: storage-system
 
 resources:
 - ../../base
+- prometheus-grafana/prometheus-deployment.yaml
+- prometheus-grafana/grafana-deployment.yaml
+- prometheus-grafana/prometheus-configmap.yaml
+- prometheus-grafana/prometheus-rbac.yaml
 
 images:
 - name: ghcr.io/robinb00/api-gateway

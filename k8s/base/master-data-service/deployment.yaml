@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: master-data-service
+  namespace: storage-system
 spec:
   replicas: 1
   selector:
@@ -11,6 +12,10 @@ spec:
     metadata:
       labels:
         app: master-data-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/actuator/prometheus"
+        prometheus.io/port: "8080"
     spec:
       containers:
         - name: master-data-service
