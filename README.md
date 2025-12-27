@@ -1,5 +1,7 @@
 # Microservices Storage System Transformation
 
+[READ THIS FIRST!](./docs/what_has_happened_so_far.md)
+
 CLC 2025 Project
 
 ## Team Members
