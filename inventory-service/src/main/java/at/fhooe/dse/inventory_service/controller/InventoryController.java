@@ -5,6 +5,7 @@ import at.fhooe.dse.inventory_service.repository.InventoryRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -51,5 +52,30 @@ public class InventoryController {
     @DeleteMapping("/{productId}")
     public void delete(@PathVariable UUID productId) {
         repository.deleteById(productId);
+    }
+
+    @PostMapping("/update-stock")
+    public InventoryItem updateStock(@RequestBody StockUpdateDto dto) {
+
+        System.out.println("📦 Inventory: Request for " + dto.productId);
+
+        Optional<InventoryItem> existing = repository.findById(dto.productId);
+
+        InventoryItem item;
+        if (existing.isPresent()) {
+            item = existing.get();
+            item.setQuantity(item.getQuantity() + dto.quantity);
+        } else {
+            item = new InventoryItem();
+            item.setProductId(dto.productId);
+            item.setQuantity(dto.quantity);
+        }
+
+        return repository.save(item);
+    }
+
+    public static class StockUpdateDto {
+        public UUID productId;
+        public int quantity;
     }
 }
