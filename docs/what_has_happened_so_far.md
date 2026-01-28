@@ -19,10 +19,10 @@ the image tag in the `kustomization.yaml` with the latest commit SHA)
 kind create cluster --name storage-system
 # change context
 kubectl config use-context kind-storage-system
-# create GitHub authentification secret to access the registry (replace GitHub credentials)
-kubectl create secret docker-registry ghcr-credentials --docker-server=ghcr.io --docker-username=<GitHub-username> --docker-password=<PAT> --docker-email=<e-mail> -n storage-system
 # create namespace
 kubectl apply -f k8s/namespace.yaml
+# create GitHub authentification secret to access the registry (replace GitHub credentials)
+kubectl create secret docker-registry ghcr-credentials --docker-server=ghcr.io --docker-username=<GitHub-username> --docker-password=<PAT> --docker-email=<e-mail> -n storage-system
 # deploy cluster
 kubectl apply -k k8s/overlays/dev
 # check if pods were deployed successfully
