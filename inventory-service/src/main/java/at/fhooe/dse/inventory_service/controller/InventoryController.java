@@ -4,6 +4,7 @@ import at.fhooe.dse.inventory_service.model.InventoryItem;
 import at.fhooe.dse.inventory_service.repository.InventoryRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -40,5 +41,15 @@ public class InventoryController {
     @GetMapping("/{productId}")
     public InventoryItem find(@PathVariable UUID productId) {
         return repository.findById(productId).orElseThrow();
+    }
+
+    @GetMapping
+    public List<InventoryItem> findAll() {
+        return repository.findAll();
+    }
+
+    @DeleteMapping("/{productId}")
+    public void delete(@PathVariable UUID productId) {
+        repository.deleteById(productId);
     }
 }
