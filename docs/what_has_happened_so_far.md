@@ -31,6 +31,8 @@ kubectl get pods -n storage-system
 kubectl port-forward svc/prometheus -n storage-system 9090:9090
 # Forward port to access via frontend
 kubectl port-forward svc/api-gateway 8080:8080 -n storage-system
+# Forward port to access grafana
+kubectl port-forward svc/grafana -n storage-system 3000:3000
 ```
 
 ### Monitoring

@@ -22,13 +22,13 @@ spec:
           image: ghcr.io/robinb00/inventory-service
           ports:
             - containerPort: 8080
-env:
-  # Matches the 'username' in your application.yaml
-  - name: SPRING_DATASOURCE_USERNAME
-    value: "inventory_user"
-  # Pulls the password securely from the Secret we created
-  - name: SPRING_DATASOURCE_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: mariadb-secret
-        key: mariadb-password
+          env:
+            # Matches the 'username' in your application.yaml
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "inventory_user"
+            # Pulls the password securely from the Secret we created
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: mariadb-password
