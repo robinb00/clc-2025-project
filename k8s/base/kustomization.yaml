@@ -9,6 +9,7 @@ resources:
   - order-service/service.yaml
   - inventory-service/deployment.yaml
   - inventory-service/service.yaml
+  - inventory-service/mariadb.yaml
 
 patches:
   - target:
