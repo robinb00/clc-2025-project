@@ -10,15 +10,15 @@ resources:
 images:
 - name: ghcr.io/robinb00/api-gateway
   newName: ghcr.io/robinb00/api-gateway
-  newTag: 438f07573efe2ad91961aa97b0d126f7914d4b27
+  newTag: b767719107938ccefeffface94ed1ac15b0e8370
 - name: ghcr.io/robinb00/inventory-service
   newName: ghcr.io/robinb00/inventory-service
-  newTag: 438f07573efe2ad91961aa97b0d126f7914d4b27
+  newTag: b767719107938ccefeffface94ed1ac15b0e8370
 - name: ghcr.io/robinb00/master-data-service
   newName: ghcr.io/robinb00/master-data-service
-  newTag: 438f07573efe2ad91961aa97b0d126f7914d4b27
+  newTag: b767719107938ccefeffface94ed1ac15b0e8370
 - name: ghcr.io/robinb00/order-service
   newName: ghcr.io/robinb00/order-service
-  newTag: 438f07573efe2ad91961aa97b0d126f7914d4b27
+  newTag: b767719107938ccefeffface94ed1ac15b0e8370
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
