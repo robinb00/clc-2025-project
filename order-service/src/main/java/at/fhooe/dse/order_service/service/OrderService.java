@@ -27,9 +27,6 @@ public class OrderService {
     @Async
     public void notifyInventory(UUID productId, int quantity) {
         try {
-            System.out.println("⏳ Order Service: Waiting 10 seconds...");
-            Thread.sleep(10000); // wait 10 seconds
-
 
             String url = "http://inventory-service:8080/inventory/update-stock";
 
