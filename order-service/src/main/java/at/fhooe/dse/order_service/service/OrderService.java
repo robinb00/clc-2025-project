@@ -31,7 +31,7 @@ public class OrderService {
             Thread.sleep(10000); // wait 10 seconds
 
 
-            String url = "http://localhost:8080/inventory/update-stock";
+            String url = "http://inventory-service:8080/inventory/update-stock";
 
             StockUpdateDto request = new StockUpdateDto(productId, quantity);
 
