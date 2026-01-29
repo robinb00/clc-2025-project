@@ -29,6 +29,8 @@ kubectl apply -k k8s/overlays/dev
 kubectl get pods -n storage-system
 # Optional: Forward prometheus port to localhost
 kubectl port-forward svc/prometheus -n storage-system 9090:9090
+# Forward port to access via frontend
+kubectl port-forward svc/api-gateway 8080:8080 -n storage-system
 ```
 
 ### Monitoring
