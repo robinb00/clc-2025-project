@@ -30,8 +30,8 @@ public class OrderService {
             System.out.println("⏳ Order Service: Waiting 10 seconds...");
             Thread.sleep(10000); // wait 10 seconds
 
-            // URL for Inventory Service (local port 8083)
-            String url = "http://localhost:8083/inventory/update-stock";
+
+            String url = "http://localhost:8080/inventory/update-stock";
 
             StockUpdateDto request = new StockUpdateDto(productId, quantity);
 

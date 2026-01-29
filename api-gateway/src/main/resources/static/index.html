@@ -9,10 +9,10 @@
 <body>
 
 <div class="container">
-  <h1>📦 Microservices Control Center</h1>
+  <h1>📦 Control Center</h1>
 
   <div class="card">
-    <h2>1. Product Catalog (Master Data)</h2>
+    <h2>1. Product Catalog</h2>
     <p><small>Defines which products are known to the system.</small></p>
 
     <div class="form-row">
@@ -31,11 +31,11 @@
   </div>
 
   <div class="card">
-    <h2>2. Place Order (Order Service)</h2>
+    <h2>2. Place Order</h2>
     <p><small>Select a known product and submit an order.</small></p>
 
     <div class="form-group">
-      <label>Select product (live from metadata):</label>
+      <label>Select product:</label>
       <select id="orderSelect">
         <option value="">Loading products...</option>
       </select>
@@ -53,7 +53,7 @@
   </div>
 
   <div class="card">
-    <h2>3. Storage System (Inventory Service)</h2>
+    <h2>3. Storage System </h2>
     <button class="btn-refresh" onclick="loadInventory()">🔄 Refresh</button>
     <p><small>Shows the current inventory state.</small></p>
 
@@ -61,14 +61,13 @@
       <thead>
       <tr>
         <th>Product Name</th>
-        <th>ID (UUID)</th>
         <th>Quantity</th>
         <th>Action</th>
       </tr>
       </thead>
       <tbody id="inventoryTable">
       <tr>
-        <td colspan="4">Loading data...</td>
+        <td colspan="3">Loading data...</td>
       </tr>
       </tbody>
     </table>
@@ -186,7 +185,7 @@
 
       if (items.length === 0) {
         tbody.innerHTML =
-                '<tr><td colspan="4" style="text-align:center">Inventory is empty.</td></tr>';
+                '<tr><td colspan="3" style="text-align:center">Inventory is empty.</td></tr>';
         return;
       }
 
@@ -196,8 +195,7 @@
         tbody.innerHTML += `
           <tr>
             <td><strong>${productName}</strong></td>
-            <td><small style="color:#999">${item.productId}</small></td>
-            <td>${item.quantity} units</td>
+            <td>${item.quantity}</td>
             <td>
               <button class="btn-delete" onclick="deleteItem('${item.productId}')">
                 Delete
@@ -209,7 +207,7 @@
 
     } catch (e) {
       tbody.innerHTML =
-              '<tr><td colspan="4" class="text-error">Error: Could not load inventory.</td></tr>';
+              '<tr><td colspan="3" class="text-error">Error: Could not load inventory.</td></tr>';
     }
   }
 
