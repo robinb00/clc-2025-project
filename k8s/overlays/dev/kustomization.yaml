@@ -7,6 +7,8 @@ resources:
 - prometheus-grafana/prometheus-configmap.yaml
 - prometheus-grafana/prometheus-rbac.yaml
 - prometheus-grafana/grafana-provisioning.yaml
+- prometheus-grafana/grafana-dashboards.yaml
+- prometheus-grafana/grafana-dashboard-provider.yaml
 
 images:
 - name: ghcr.io/robinb00/api-gateway
