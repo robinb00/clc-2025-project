@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CLC Microservices Demo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Use absolute paths so it works regardless of the current URL -->
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+
+<div class="container">
+  <h1>📦 Microservices Control Center</h1>
+
+  <div class="card">
+    <h2>1. Product Catalog (Master Data)</h2>
+    <p><small>Defines which products are known to the system.</small></p>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="prodName" placeholder="e.g. iPhone 15">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" id="prodDesc" placeholder="e.g. Smartphone">
+      </div>
+      <button class="btn-primary" onclick="createProduct()">Create</button>
+    </div>
+
+    <div id="prodStatus" class="status"></div>
+  </div>
+
+  <div class="card">
+    <h2>2. Place Order (Order Service)</h2>
+    <p><small>Select a known product and submit an order.</small></p>
+
+    <div class="form-group">
+      <label>Select product (live from metadata):</label>
+      <select id="orderSelect">
+        <option value="">Loading products...</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Quantity:</label>
+        <input type="number" id="orderAmount" value="1" min="1">
+      </div>
+      <button class="btn-order" onclick="placeOrder()">Place Order 🛒</button>
+    </div>
+
+    <div id="orderStatus" class="status"></div>
+  </div>
+
+  <div class="card">
+    <h2>3. Storage System (Inventory Service)</h2>
+    <button class="btn-refresh" onclick="loadInventory()">🔄 Refresh</button>
+    <p><small>Shows the current inventory state.</small></p>
+
+    <table>
+      <thead>
+      <tr>
+        <th>Product Name</th>
+        <th>ID (UUID)</th>
+        <th>Quantity</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody id="inventoryTable">
+      <tr>
+        <td colspan="4">Loading data...</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>

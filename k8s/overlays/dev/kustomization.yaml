@@ -2,6 +2,7 @@ namespace: storage-system
 
 resources:
 - ../../base
+- ingress.yaml
 - prometheus-grafana/prometheus-deployment.yaml
 - prometheus-grafana/grafana-deployment.yaml
 - prometheus-grafana/prometheus-configmap.yaml

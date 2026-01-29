@@ -18,11 +18,6 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-   // @PostMapping
-    //public Order create(@RequestBody Order order) {
-     //   order.setStatus("CREATED");
-      //  return repository.save(order);
-    //}
 
     @PostMapping
     public Order create(@RequestBody Order order) {

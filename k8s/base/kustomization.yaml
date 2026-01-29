@@ -9,6 +9,9 @@ resources:
   - order-service/service.yaml
   - inventory-service/deployment.yaml
   - inventory-service/service.yaml
+  - frontend/configmap.yaml
+  - frontend/deployment.yaml
+  - frontend/service.yaml
 
 patches:
   - target:

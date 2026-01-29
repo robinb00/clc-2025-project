@@ -2,6 +2,7 @@ package at.fhooe.dse.order_service.service;
 
 import at.fhooe.dse.order_service.model.Order;
 import at.fhooe.dse.order_service.repository.OrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -11,11 +12,14 @@ import java.util.UUID;
 @Service
 public class OrderService {
 
-    private final OrderRepository repository;
-    private final RestTemplate restTemplate = new RestTemplate(); // For HTTP calls
 
-    public OrderService(OrderRepository repository) {
+    private final OrderRepository repository;
+    private final RestTemplate restTemplate; // For HTTP calls
+
+    @Autowired
+    public OrderService(OrderRepository repository, RestTemplate restTemplate) {
         this.repository = repository;
+        this.restTemplate = restTemplate;
     }
 
     public Order saveOrder(Order order) {

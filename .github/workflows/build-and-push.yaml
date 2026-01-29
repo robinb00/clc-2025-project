@@ -39,7 +39,7 @@ jobs:
 
       - name: Build & push Docker images
         run: |
-          for service in api-gateway master-data-service order-service inventory-service; do
+          for service in api-gateway master-data-service order-service inventory-service frontend; do
             docker build \
               -t $IMAGE_PREFIX/$service:${{ github.sha }} \
               -f $service/Dockerfile \
@@ -62,6 +62,9 @@ jobs:
 
           kustomize edit set image \
             $IMAGE_PREFIX/inventory-service=${IMAGE_PREFIX}/inventory-service:${{ github.sha }}
+          
+          kustomize edit set image \
+            $IMAGE_PREFIX/frontend=${IMAGE_PREFIX}/frontend:${{ github.sha }}
 
       - name: Commit updated manifests
         run: |
