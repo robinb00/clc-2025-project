@@ -28,6 +28,8 @@ metadata:
   namespace: storage-system
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: inventorydb
