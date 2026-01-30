@@ -2,8 +2,10 @@ package at.fhooe.dse.order_service.controller;
 
 import at.fhooe.dse.order_service.model.Order;
 import at.fhooe.dse.order_service.repository.OrderRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import at.fhooe.dse.order_service.service.OrderService;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -42,4 +44,19 @@ public class OrderController {
     public Order findById(@PathVariable UUID id) {
         return repository.findById(id).orElseThrow();
     }
+    // --- Test Error Endpoint ---
+    @PostMapping("/test-error")
+    public void triggerError(@RequestParam String type) {
+        switch (type) {
+            case "400":
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Forced 400 for demo");
+            case "404":
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Forced 404 for demo");
+            case "500":
+                throw new RuntimeException("Forced 500 for demo");
+            default:
+                throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
+        }
+    }
+
 }

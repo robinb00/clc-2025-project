@@ -72,8 +72,21 @@
       </tbody>
     </table>
   </div>
-</div>
 
+  <div class="card text-center">
+    <h2>⚡ Error Testing</h2>
+    <p><small>Trigger HTTP errors to test Grafana alerts.</small></p>
+
+    <div class="error-actions">
+      <button class="btn-sim" onclick="simulateError('400')">Bad Request (400)</button>
+      <button class="btn-sim" onclick="simulateError('404')">Not Found (404)</button>
+      <button class="btn-sim" onclick="simulateError('500')">Server Error (500)</button>
+    </div>
+
+    <div id="testErrorStatus"></div>
+  </div>
+
+</div>
 <script src="frontend.js"></script>
 </body>
 </html>

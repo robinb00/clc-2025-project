@@ -150,3 +150,27 @@ async function deleteItem(id) {
     alert("Delete failed");
   }
 }
+async function simulateError(code) {
+  const statusDiv = document.getElementById('testErrorStatus');
+  statusDiv.style.display = 'block';
+  statusDiv.innerHTML = '<small style="color:var(--muted)">Request pending...</small>';
+
+  try {
+    const res = await fetch(`/orders/test-error?type=${code}`, { method: 'POST' });
+
+    const time = new Date().toLocaleTimeString();
+
+    if (res.ok) {
+      statusDiv.className = 'lab-success';
+      statusDiv.innerHTML = `✅ <strong>${res.status}</strong> (OK) - ${time}`;
+    } else {
+      statusDiv.className = 'lab-error';
+      statusDiv.innerHTML = `🔥 <strong>${res.status} ${res.statusText}</strong> triggered at ${time}`;
+    }
+
+  } catch (e) {
+    statusDiv.className = 'lab-error';
+    statusDiv.innerHTML = `❌ <strong>Network Error</strong>: Is the backend running?`;
+  }
+}
+

@@ -235,3 +235,54 @@ tr:hover td {
         font-size: 1.7rem;
     }
 }
+/* --- Error Testing Card --- */
+
+.error-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.btn-sim {
+    background-color: #4b5563;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.btn-sim:hover {
+    background-color: #374151;
+    transform: translateY(-1px);
+}
+
+.btn-sim:active {
+    transform: scale(0.98);
+}
+
+#testErrorStatus {
+    margin-top: 16px;
+    font-size: 0.9rem;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    display: none;
+}
+
+.lab-error {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.lab-success {
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
