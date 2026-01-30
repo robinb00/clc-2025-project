@@ -5,11 +5,12 @@ resources:
   - api-gateway/service.yaml
   - master-data-service/deployment.yaml
   - master-data-service/service.yaml
+  - master-data-service/masterdb.yaml
   - order-service/deployment.yaml
   - order-service/service.yaml
   - inventory-service/deployment.yaml
   - inventory-service/service.yaml
-  - inventory-service/mariadb.yaml
+  - inventory-service/inventorydb.yaml
 
 patches:
   - target:

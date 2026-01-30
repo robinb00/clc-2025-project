@@ -1,17 +1,17 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: mariadb-secret
+  name: masterdb-secret
   namespace: storage-system
 type: Opaque
 stringData:
-  mariadb-root-password: "root-password"
-  mariadb-password: "inventory-password"
+  masterdb-root-password: "root-password"
+  masterdb-password: "master-password"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mariadb-pvc
+  name: masterdb-pvc
   namespace: storage-system
 spec:
   accessModes:
@@ -24,30 +24,30 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mariadb
+  name: masterdb
   namespace: storage-system
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mariadb
+      app: masterdb
   template:
     metadata:
       labels:
-        app: mariadb
+        app: masterdb
     spec:
       containers:
-        - name: mariadb
-          image: mariadb:10.11
+        - name: masterdb
+          image: masterdb:10.11
           env:
-            - name: MARIADB_ROOT_PASSWORD
-              valueFrom: { secretKeyRef: { name: mariadb-secret, key: mariadb-root-password } }
-            - name: MARIADB_DATABASE
-              value: inventory_db
-            - name: MARIADB_USER
-              value: inventory_user
-            - name: MARIADB_PASSWORD
-              valueFrom: { secretKeyRef: { name: mariadb-secret, key: mariadb-password } }
+            - name: masterDB_ROOT_PASSWORD
+              valueFrom: { secretKeyRef: { name: masterdb-secret, key: masterdb-root-password } }
+            - name: masterDB_DATABASE
+              value: master_db
+            - name: masterDB_USER
+              value: master_user
+            - name: masterDB_PASSWORD
+              valueFrom: { secretKeyRef: { name: masterdb-secret, key: masterdb-password } }
           ports:
             - containerPort: 3306
           volumeMounts:
@@ -56,16 +56,16 @@ spec:
       volumes:
         - name: db-storage
           persistentVolumeClaim:
-            claimName: mariadb-pvc
+            claimName: masterdb-pvc
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mariadb
+  name: masterdb
   namespace: storage-system
 spec:
   selector:
-    app: mariadb
+    app: masterdb
   ports:
     - port: 3306

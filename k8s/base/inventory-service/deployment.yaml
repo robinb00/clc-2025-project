@@ -4,7 +4,7 @@ metadata:
   name: inventory-service
   namespace: storage-system
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: inventory-service
@@ -12,6 +12,10 @@ spec:
     metadata:
       labels:
         app: inventory-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/actuator/prometheus"
+        prometheus.io/port: "8080"
     spec:
       containers:
         - name: inventory-service
@@ -24,7 +28,7 @@ spec:
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mariadb-secret
-                  key: mariadb-password
+                  name: inventorydb-secret
+                  key: inventorydb-password
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:mariadb://mariadb:3306/inventory_db"
