@@ -38,7 +38,7 @@ spec:
     spec:
       containers:
         - name: masterdb
-          image: masterdb:10.11
+          image: mariadb:10.11
           env:
             - name: MARIADB_ROOT_PASSWORD
               valueFrom: { secretKeyRef: { name: masterdb-secret, key: masterdb-root-password } }
