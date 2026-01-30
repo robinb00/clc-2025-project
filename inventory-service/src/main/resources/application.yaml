@@ -2,15 +2,15 @@ server:
   port: 8080
   address: 0.0.0.0
 
-datasource:
-  # 'mariadb' matches the Service name defined above
-  url: jdbc:mariadb://mariadb:3306/inventory_db
-  username: inventory_user
-  password: inventory-password
-  driver-class-name: org.mariadb.jdbc.Driver
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mariadb://mariadb:3306/inventory_db}
+    username: ${SPRING_DATASOURCE_USERNAME:inventory_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:inventory-password}
+    driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update # Keeps your table structure
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MariaDBDialect

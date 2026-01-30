@@ -12,10 +12,6 @@ spec:
     metadata:
       labels:
         app: inventory-service
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/path: "/actuator/prometheus"
-        prometheus.io/port: "8080"
     spec:
       containers:
         - name: inventory-service
@@ -23,12 +19,12 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            # Matches the 'username' in your application.yaml
             - name: SPRING_DATASOURCE_USERNAME
               value: "inventory_user"
-            # Pulls the password securely from the Secret we created
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mariadb-secret
                   key: mariadb-password
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mariadb://mariadb:3306/inventory_db"
