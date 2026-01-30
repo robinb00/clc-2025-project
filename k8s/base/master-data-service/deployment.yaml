@@ -24,7 +24,7 @@ spec:
             - containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_USERNAME
-              value: "inventory_user"
+              value: "master_user"
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:

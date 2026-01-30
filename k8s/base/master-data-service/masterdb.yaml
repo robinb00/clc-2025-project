@@ -43,9 +43,9 @@ spec:
             - name: MARIADB_ROOT_PASSWORD
               valueFrom: { secretKeyRef: { name: masterdb-secret, key: masterdb-root-password } }
             - name: MARIADB_DATABASE
-              value: inventory_db
+              value: master_db
             - name: MARIADB_USER
-              value: inventory_user
+              value: master_user
             - name: MARIADB_PASSWORD
               valueFrom: { secretKeyRef: { name: masterdb-secret, key: masterdb-password } }
           ports:
