@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: inventorydb-secret
+  namespace: storage-system
+type: Opaque
+stringData:
+  inventorydb-root-password: "root-password"
+  inventorydb-password: "inventory-password"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: inventorydb-pvc
+  namespace: storage-system
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventorydb
+  namespace: storage-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventorydb
+  template:
+    metadata:
+      labels:
+        app: inventorydb
+    spec:
+      containers:
+        - name: inventorydb
+          image: inventorydb:10.11
+          env:
+            - name: inventoryDB_ROOT_PASSWORD
+              valueFrom: { secretKeyRef: { name: inventorydb-secret, key: inventorydb-root-password } }
+            - name: inventoryDB_DATABASE
+              value: inventory_db
+            - name: inventoryDB_USER
+              value: inventory_user
+            - name: inventoryDB_PASSWORD
+              valueFrom: { secretKeyRef: { name: inventorydb-secret, key: inventorydb-password } }
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: inventorydb-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventorydb
+  namespace: storage-system
+spec:
+  selector:
+    app: inventorydb
+  ports:
+    - port: 3306
