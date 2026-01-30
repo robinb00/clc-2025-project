@@ -40,13 +40,13 @@ spec:
         - name: inventorydb
           image: inventorydb:10.11
           env:
-            - name: inventoryDB_ROOT_PASSWORD
+            - name: MARIADB_ROOT_PASSWORD
               valueFrom: { secretKeyRef: { name: inventorydb-secret, key: inventorydb-root-password } }
-            - name: inventoryDB_DATABASE
+            - name: MARIADB_DATABASE
               value: inventory_db
-            - name: inventoryDB_USER
+            - name: MARIADB_USER
               value: inventory_user
-            - name: inventoryDB_PASSWORD
+            - name: MARIADB_PASSWORD
               valueFrom: { secretKeyRef: { name: inventorydb-secret, key: inventorydb-password } }
           ports:
             - containerPort: 3306

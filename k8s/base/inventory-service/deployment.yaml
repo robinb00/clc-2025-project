@@ -31,4 +31,4 @@ spec:
                   name: inventorydb-secret
                   key: inventorydb-password
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:mariadb://mariadb:3306/inventory_db"
+              value: "jdbc:mariadb://inventorydb:3306/inventory_db"

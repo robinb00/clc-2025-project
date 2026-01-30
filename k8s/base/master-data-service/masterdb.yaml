@@ -40,13 +40,13 @@ spec:
         - name: masterdb
           image: masterdb:10.11
           env:
-            - name: masterDB_ROOT_PASSWORD
+            - name: MARIADB_ROOT_PASSWORD
               valueFrom: { secretKeyRef: { name: masterdb-secret, key: masterdb-root-password } }
-            - name: masterDB_DATABASE
-              value: master_db
-            - name: masterDB_USER
-              value: master_user
-            - name: masterDB_PASSWORD
+            - name: MARIADB_DATABASE
+              value: inventory_db
+            - name: MARIADB_USER
+              value: inventory_user
+            - name: MARIADB_PASSWORD
               valueFrom: { secretKeyRef: { name: masterdb-secret, key: masterdb-password } }
           ports:
             - containerPort: 3306
