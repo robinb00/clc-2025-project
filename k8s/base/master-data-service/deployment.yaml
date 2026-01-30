@@ -31,4 +31,4 @@ spec:
                   name: masterdb-secret
                   key: masterdb-password
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:mariadb://mariadb:3306/master_db"
+              value: "jdbc:mariadb://masterdb:3306/master_db"

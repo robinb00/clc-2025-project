@@ -13,7 +13,7 @@ COPY master-data-service ./master-data-service
 COPY inventory-service ./inventory-service
 
 # Build all modules, skip tests
-RUN mvn -B clean package -DskipTests
+RUN mvn -B clean package -DskipTests -q
 
 # ---------- runtime stage ----------
 FROM eclipse-temurin:21-jre-jammy

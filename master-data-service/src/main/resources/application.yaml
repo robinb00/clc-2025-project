@@ -4,7 +4,7 @@ server:
 
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mariadb://mariadb:3306/master_db}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mariadb://masterdb:3306/master_db}
     username: ${SPRING_DATASOURCE_USERNAME:master_user}
     password: ${SPRING_DATASOURCE_PASSWORD:master-password}
     driver-class-name: org.mariadb.jdbc.Driver
