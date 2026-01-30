@@ -17,6 +17,10 @@ spec:
         prometheus.io/path: "/actuator/prometheus"
         prometheus.io/port: "8080"
     spec:
+      initContainers:
+        - name: wait-for-inventorydb
+          image: busybox:1.36
+          command: [ "sh", "-c", "until nc -z inventorydb 3306; do echo 'waiting for inventorydb...'; sleep 2; done" ]
       containers:
         - name: inventory-service
           image: ghcr.io/robinb00/inventory-service

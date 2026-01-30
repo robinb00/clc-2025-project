@@ -52,6 +52,12 @@ spec:
               valueFrom: { secretKeyRef: { name: inventorydb-secret, key: inventorydb-password } }
           ports:
             - containerPort: 3306
+          readinessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 5
+            periodSeconds: 2
+            failureThreshold: 30
           volumeMounts:
             - name: db-storage
               mountPath: /var/lib/mysql

@@ -17,6 +17,10 @@ spec:
         prometheus.io/path: "/actuator/prometheus"
         prometheus.io/port: "8080"
     spec:
+      initContainers:
+        - name: wait-for-masterdb
+          image: busybox:1.36
+          command: [ "sh", "-c", "until nc -z masterdb 3306; do echo 'waiting for masterdb...'; sleep 2; done" ]
       containers:
         - name: master-data-service
           image: ghcr.io/robinb00/master-data-service
