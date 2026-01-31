@@ -1,8 +1,9 @@
 # Microservices Storage System Transformation
 
-[READ THIS FIRST!](./docs/what_has_happened_so_far.md)
+CLC 2025 – Cloud-Native Systems Project
 
-CLC 2025 Project
+This project demonstrates the design, deployment and operation of a
+cloud-native microservices system on Kubernetes.
 
 ## Team Members
 
@@ -12,179 +13,162 @@ CLC 2025 Project
 
 ---
 
-## Project Overview
-
-This project focuses on designing and operating a cloud-native system on Kubernetes.
-
-To provide a realistic foundation, we will deploy and operate **a minimal microservices-based storage and order management application**. This minimal application serves only to demonstrate cloud-native infrastructure concepts, not as a feature-complete business system.
-
-The core objective is to **design, deploy, and operate a cloud-native architecture** that demonstrates key principles such as:
-
-* Containerized microservices on Kubernetes
-* Autoscaling and resilience under load
-* Observability and system transparency
-* Self-healing behavior and fault tolerance
-* Declarative and automated deployment practices
-
-The system will be implemented in **Java with Spring Boot**, containerized using Docker, and orchestrated on **Kubernetes (kind)**.
+##  Table of Contents
+1. [Project Overview](#1-project-overview)
+2. [Research & Architecture](#2-architecture--research)
+3. [Tutorial: Getting Started](#3-tutorial-getting-started)
+4. [Observability & Monitoring](#4-observability--monitoring)
+5. [Lessons Learned](#5-lessons-learned)
 
 ---
 
-## Background: Existing System
+## 1. Project Overview
 
-In a previous bachelor-level course, a storage and order management system was implemented in **C#**, focusing mainly on application logic and data persistence.
+This project focuses on designing and operating a cloud-native system on Kubernetes. To provide a realistic foundation, we deployed a minimal microservices-based storage and order management application.
 
-For this project:
+This application serves to demonstrate cloud-native infrastructure concepts rather than feature-complete business logic. The core objective is to design, deploy, and operate a cloud-native architecture that demonstrates key principles such as:
+- Containerized microservices
+- Automated deployments via Kustomize 
+- Service Discovery & API Gateway patterns 
+- Observability (Metrics & Monitoring)
 
-* **No code reuse**: The existing implementation will not be reused
-* **Minimal Logic**: We only use the abstract domain idea to define request flows
-* **Focus**: The system will be redesigned to fit the requirements of a cloud-native architecture
-
----
-
-### Key Cloud-Native Concepts to Be Implemented
-
-* **Self-Healing & Resilience**
-  * Kubernetes-native self-healing (restarts, rescheduling)
-  * Application-level resilience patterns (retries, timeouts, circuit breakers)
-* **Observability**
-  * Metrics collection with **Prometheus**
-  * Visualization and dashboards using **Grafana**
-* **Cloud-Native Deployment Practices**
-  * Declarative Kubernetes manifests
-  * Git-based configuration and reproducible deployments (GitOps-oriented workflow)
+The system is implemented in **Java with Spring Boot**, containerized using Docker, and orchestrated on **Kubernetes (kind)**.
 
 ---
 
-## What We Will Develop
+## 2. Architecture & Research
 
-### Minimal Microservices Application
+In this section, we summarize our research regarding the architectural style and the tooling required to implement a cloud-native system.
 
-The system will consist of **approximately four lightweight microservices**, an API Gateway, and a simple frontend.
 
-The services are intentionally small and simple, providing just enough functionality to:
+### 2.1. Architectural Decisions (Research)
 
-* Generate load
-* Exchange data between services
-* Observe scaling, failures, and recovery behavior
 
-#### Microservices
 
-* **Master Data Service**  
-  Manages basic reference data (e.g. products).
+### 2.2. High-Level Architecture
 
-* **Order Service**  
-  Provides simple order creation and querying to simulate workflows and load.
+![Architecture Diagram](./docs/architecture_diagram.png) 
 
-* **Inventory Service**  
-  Manages basic stock levels and inventory changes.
+- **External Traffic:** All traffic enters the system via the API Gateway.
+- **Internal Communication:** Services communicate synchronously using Kubernetes DNS Service Discovery.
+- **Monitoring:** Prometheus and Grafana run alongside the application in the same cluster. 
 
-* **API Gateway**  
-  Serves as a single entry point for the frontend and routes requests to backend services.
 
-No authentication or advanced business logic will be implemented, as these are not required for demonstrating cloud-native behavior.
+### 2.3. Technology Stack & Tooling
+#### Kubernetes
+####  CI/CD
 
----
 
-### Frontend
+### 2.4. Implemented System
 
-A **minimal web frontend** will be provided to:
+The system consists of four lightweight microservices, an API Gateway and a minimal frontend.
+The services are intentionally simple and serve primarily to demonstrate cloud-native behavior.
 
-* Trigger requests
-* Generate load
-* Interact with the API Gateway
+#### API Gateway & Frontend
+- **Tech:** Spring Cloud Gateway, SPA (HTML/JS)
+- **Role:** Single entry point, routes requests to backend services
+- **Purpose:** Trigger requests and generate load
 
----
+#### Master Data Service
+- **Tech:** Java, Spring Boot
+- **Role:** Provides static product data
+- **Design:** Stateless microservice
 
-## Containerization and Kubernetes Platform
+#### Order Service
+- **Tech:** Java, Spring Boot
+- **Role:** Simulates order creation and inter-service communication
 
-* Each service will be **containerized using Docker**
-* The full system will run on **Kubernetes via kind**
-* Kubernetes manifests will define:
-  * Deployments
-  * Services
-  * Autoscaling rules
-  * Health checks and resource limits
-
-The platform setup is designed to **simulate real-world cloud-native deployments**, while remaining fully local and reproducible.
+#### Inventory Service
+- **Tech:** Java, Spring Boot
+- **Role:** Manages stock levels based on orders
 
 ---
 
-## Observability and Monitoring
+## 3. Tutorial: Getting Started
 
-To ensure traceability and transparency of system behavior:
-
-* **Prometheus** will be used to collect metrics (CPU, memory, request rates, scaling events)
-* **Grafana** will be used to visualize metrics and system behavior
-* Metrics will be used to:
-  * Demonstrate autoscaling under load
-  * Observe recovery after failures
-  * Analyze system stability
+Follow these steps to reproduce the environment locally.
 
 ---
 
-## CI/CD and Deployment Workflow
-
-A GitHub Actions–based pipeline will be established to:
-
-* Build and test services
-* Build Docker images
-* Validate Kubernetes manifests
-* Support a **GitOps-style workflow**, where infrastructure changes are driven via version-controlled configuration
+### Prerequisites
+* **Docker Desktop** (running)
+* **Kind** (Kubernetes in Docker)
+* **Kubectl**
+* **Git**
+* **GitHub Personal Access Token (PAT)** 
 
 ---
 
-## Architecture Diagram
+### Step 1: Build & Prepare (Optional)
 
-![Architecture Diagram](docs/architecture_diagram.png)
+If you want to build the code from source instead of pulling existing images:
+
+```bash
+# Build Java Artifacts
+./mvnw clean package -DskipTests
+
+# Build Docker Images
+docker build -t ghcr.io/robinb00/api-gateway:latest .
+docker build -t ghcr.io/robinb00/order-service:latest ./order-service
+# ... repeat for other services
+```
+
+### Step 2: Kubernetes Cluster Setup & Deployment
+
+```bash
+# create cluster
+kind create cluster --name storage-system
+# change context
+kubectl config use-context kind-storage-system
+# create namespace
+kubectl apply -f k8s/namespace.yaml
+```
+
+### Step 3: Deployment
+
+To pull images from the GitHub Container Registry (GHCR), we need to create a secret.
+
+```bash
+kubectl create secret docker-registry ghcr-credentials \
+  --docker-server=ghcr.io \
+  --docker-username=<GITHUB-USERNAME> \
+  --docker-password=<PAT-TOKEN> \
+  --docker-email=<EMAIL> \
+  -n storage-system
+  
+# deploy cluster
+kubectl apply -k k8s/overlays/dev
+```
+
+
+### Step 4: Verify Deployment
+
+Check if all pods are running:
+
+```bash
+kubectl get pods -n storage-system
+```
+
+Once running, forward the API Gateway port to access the frontend:
+
+```bash
+kubectl port-forward svc/api-gateway 8080:8080 -n storage-system
+```
+
+**Open Application:** http://localhost:8080/index.html
 
 ---
 
-## Milestones
+## 4. Observability & Monitoring
 
-| Date           | Milestone                                          | Status     |
-|----------------|----------------------------------------------------|------------|
-| **15.12.2025** | Proposal & Repository Setup                        | ✅ Done     |
-| **20.12.2025** | Kubernetes Environment & Base Infrastructure Setup | 📅 Planned |
-| **04.01.2026** | Minimal Microservices Implementation               | 📅 Planned |
-| **08.01.2026** | API Gateway & Frontend Integration                 | 📅 Planned |
-| **12.01.2026** | Dockerization & CI/CD Pipeline                     | 📅 Planned |
-| **19.01.2026** | Observability & Resilience Implementation          | 📅 Planned |
-| **26.01.2026** | Fault Scenarios, Testing & Documentation           | 📅 Planned |
-| **02.02.2026** | Final Presentation & Demonstration                 | 📅 Planned |
+```bash
+# Access Grafana
+kubectl port-forward svc/grafana -n storage-system 3000:3000
+```
 
----
+**URL**: http://localhost:3000
 
-## Distribution of Work and Responsibilities
 
-*Disclaimer:* Architectural decisions, infrastructure design, and evaluations will be carried out collaboratively. The roles below define primary focus areas.
 
-### 👤 Selina – Application & Gateway Focus
-
-* Master Data Service implementation (minimal functionality)
-* API Gateway configuration and request routing
-* Frontend setup for triggering requests and load
-* Support for observability integration at application level
-
-### 👤 Robin – Kubernetes & Cloud Infrastructure Focus
-
-* Inventory Service implementation (minimal functionality)
-* Kubernetes manifests (Deployments, Services, HPA)
-* Autoscaling configuration and load testing scenarios
-* Local Kubernetes cluster operation using kind
-
-### 👤 Jonas – DevOps, CI/CD & Observability Focus
-
-* Order Service implementation (minimal functionality)
-* GitHub Actions CI/CD pipeline
-* Prometheus and Grafana setup
-* Monitoring dashboards and metric validation
-
----
-
-### 🤝 Shared Responsibilities
-
-* Cloud-native architecture design
-* Resilience and self-healing strategy
-* Documentation
-* Preparation of final demonstration and presentation
+## 5. Lessons Learned
+During the transition from local development to a cloud-native Kubernetes environment, we encountered and solved several key challenges:
