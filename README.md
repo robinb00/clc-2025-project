@@ -116,11 +116,11 @@ docker build -t ghcr.io/robinb00/order-service:latest ./order-service
 ### Step 2: Kubernetes Cluster Setup & Deployment
 
 ```bash
-# create cluster
+# Create cluster
 kind create cluster --name storage-system
-# change context
+# Change context
 kubectl config use-context kind-storage-system
-# create namespace
+# Create namespace
 kubectl apply -f k8s/namespace.yaml
 ```
 
@@ -136,7 +136,7 @@ kubectl create secret docker-registry ghcr-credentials \
   --docker-email=<EMAIL> \
   -n storage-system
   
-# deploy cluster
+# Deploy cluster
 kubectl apply -k k8s/overlays/dev
 ```
 
@@ -161,13 +161,87 @@ kubectl port-forward svc/api-gateway 8080:8080 -n storage-system
 
 ## 4. Observability & Monitoring
 
+### Technology Stack
+
+This stack utilizes [**Prometheus**](https://prometheus.io) for metric collection, paired with [**Grafana**](https://grafana.com) for data visualization, and alerting. This combination provides real-time insights into the cluster's performance and health.
+
+* **Prometheus (Database Layer):** Prometheus acts as the storage system's time-series database. It actively scrapes metrics from applications and infrastructure at regular intervals.
+* **Grafana (Visualization Layer):** While Prometheus is powerful, its native UI is designed for debugging rather than long-term monitoring. Grafana connects to Prometheus as a **Data Source**, querying the metrics and transforming raw numbers into easily customizable visualizations. 
+
+### Accessing the Web Interfaces
+To access the dashboards locally, you must forward the service ports:
+
 ```bash
-# Access Grafana
+# Forward Prometheus to localhost:9090
+kubectl port-forward svc/prometheus -n storage-system 9090:9090
+
+# Forward Grafana to localhost:3000
 kubectl port-forward svc/grafana -n storage-system 3000:3000
 ```
 
-**URL**: http://localhost:3000
+If the port forwarding is set up correctly, you can access the web interfaces via the URLs below.
 
+**Prometheus URL**: http://localhost:9000
+
+**Grafana URL**: http://localhost:3000
+
+### Configuring Slack Alerts (Optional)
+
+To receive notifications in your Slack workspace, update the webhook configuration in the [grafana-alerting.yaml](k8s/overlays/dev/prometheus-grafana/grafana-alerting.yaml) file.
+
+1. **Update the Webhook:** Replace the `SLACK_WEBHOOK_URL_PLACEHOLDER` in the [grafana-alerting.yaml](k8s/overlays/dev/prometheus-grafana/grafana-alerting.yaml) file with your desired Slack webhook URL.
+
+```yaml
+# Snippet from grafana-alerting.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-alerting
+  namespace: storage-system
+data:
+  alerting.yaml: |
+    apiVersion: 1
+
+    contactPoints:
+      - orgId: 1
+        name: Slack-Channel
+        receivers:
+          - uid: slack-notifier
+            type: slack
+            settings:
+              icon_emoji: ':rotating_light:'
+              url: SLACK_WEBHOOK_URL_PLACEHOLDER
+              username: Grafana Bot
+            disableResolveMessage: false
+```
+2. **Apply and Refresh:** If the cluster is already running, run the following commands to apply the new ConfigMap and restart the Grafana pod to pick up the changes
+```bash
+# Apply cluster configurations
+kubectl apply -k k8s/overlays/dev
+
+# Restart Grafana by deleting the existing pod
+kubectl delete pod -l app=grafana -n storage-system
+```
+
+### Prometheus Web Interface
+
+The Prometheus UI is your primary tool for ad-hoc queries and verifying that metrics are being collected correctly.
+
+Graph/Expression Tab: Use this to write PromQL (Prometheus Query Language) queries. For example, typing up will show you which targets are currently being monitored.
+
+Status > Targets: This is a crucial page for troubleshooting. It shows every endpoint Prometheus is trying to scrape and whether the connection is "UP" or "DOWN."
+
+Alerts: Displays all configured alerting rules and their current state (Inactive, Pending, or Firing).
+
+### Grafana Web Interface
+
+Grafana is where you will spend most of your time observing the health of the storage system through visual dashboards.
+
+Dashboards: Navigate to the "Dashboards" section to view pre-configured visualizations. These dashboards pull data from Prometheus and display it in real-time.
+
+Data Sources: Under "Connections," you will find Prometheus listed as the primary data source. This connection is pre-configured via the deployment manifests.
+
+Alerting: While Prometheus evaluates the math behind alerts, Grafana manages the human side—routing those alerts to Slack, Email, or PagerDuty.
 
 
 ## 5. Lessons Learned
