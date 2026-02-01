@@ -4,10 +4,16 @@ server:
 
 spring:
   datasource:
-    url: jdbc:h2:mem:orders
+    url: ${SPRING_DATASOURCE_URL:jdbc:mariadb://orderdb:3306/order_db}
+    username: ${SPRING_DATASOURCE_USERNAME:order_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:order-password}
+    driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDBDialect
 
 management:
   endpoints:

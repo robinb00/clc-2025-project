@@ -4,7 +4,7 @@ metadata:
   name: master-data-service
   namespace: storage-system
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: master-data-service

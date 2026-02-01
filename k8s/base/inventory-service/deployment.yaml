@@ -4,7 +4,7 @@ metadata:
   name: inventory-service
   namespace: storage-system
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: inventory-service

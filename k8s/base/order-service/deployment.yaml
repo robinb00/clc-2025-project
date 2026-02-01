@@ -4,7 +4,7 @@ metadata:
   name: order-service
   namespace: storage-system
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: order-service
@@ -17,8 +17,22 @@ spec:
         prometheus.io/path: "/actuator/prometheus"
         prometheus.io/port: "8080"
     spec:
+      initContainers:
+        - name: wait-for-orderdb
+          image: busybox:1.36
+          command: [ "sh", "-c", "until nc -z orderdb 3306; do echo 'waiting for orderdb...'; sleep 2; done" ]
       containers:
         - name: order-service
           image: ghcr.io/robinb00/order-service
           ports:
             - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "order_user"
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: orderdb-secret
+                  key: orderdb-password
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mariadb://orderdb:3306/order_db"
