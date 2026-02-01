@@ -8,6 +8,7 @@ resources:
   - master-data-service/masterdb.yaml
   - order-service/deployment.yaml
   - order-service/service.yaml
+  - order-service/orderdb.yaml
   - inventory-service/deployment.yaml
   - inventory-service/service.yaml
   - inventory-service/inventorydb.yaml
