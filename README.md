@@ -361,7 +361,27 @@ while ($true) { curl.exe -s -o NUL http://localhost:8080/actuator/health }
 This command sends requests in an infinite loop as fast as your machine can process them to the `/actuator/health` endpoint and should also trigger the alert rule, which will then send a Slack notification if you chose to set up the webhook.
 
 ## 5. Lessons Learned
-During the transition from local development to a cloud-native Kubernetes environment, we encountered and solved several key challenges:
-- Kubernetes "Out of the Box" Capabilities: We learned that Kubernetes handles complex deployment strategies without requiring external scripts.
-   - **Internal Routing (DNS)**: We did not need to manage IP addresses manually. Kubernetes DNS allowed our microservices to communicate simply by using their service names (e.g., http://order-service), streamlining the architecture significantly.
-   - **Rolling Updates**: We observed that Kubernetes automatically manages updates by gradually replacing old Pods with new ones. This ensures zero downtime during deployments, a feature that would require complex configuration in a non-containerized environment.
+
+### Kubernetes & Deployments
+- **CrashLoopBackOff debugging is mostly about logs and events, not guesswork.**  
+  We learned to start with `kubectl describe pod` (events/probes) and `kubectl logs --previous` (last crash output). This saved time compared to repeatedly redeploying.
+
+- **Readiness/Liveness probes and init containers strongly influence stability.**  
+  A service can be “correct” but still restart if probes are too strict or if dependencies aren’t ready. Adding a “wait-for-db” mechanism and tuning probes made startup much more reliable.
+
+- **Scaling stateless services is easy; stateful components need more care.**  
+  Replicas for services were straightforward, but databases required persistence, stable configuration, and careful initialization to avoid data loss and inconsistent state.
+
+### Data & Persistence
+- **“Database per service” reduces coupling but increases operational overhead.**  
+  Separate databases simplified service boundaries but required consistent secret/config management and more Kubernetes resources to maintain.
+
+- **PersistentVolumeClaims are necessary even in local clusters but still behave differently than cloud storage.**  
+  PVCs protected data across restarts, but local storage in kind has limitations compared to managed storage classes and real-world failure scenarios.
+
+### CI/CD & Release Process
+- **Immutable image tags (commit SHA) greatly improve traceability and debugging.**  
+  When something broke, we could identify exactly which build was running and roll back to a known working version.
+
+- **Automation is only useful when it’s reproducible locally.**  
+  Ensuring the same Docker build works locally and in CI prevented “works on my machine” situations and reduced deployment surprises.
