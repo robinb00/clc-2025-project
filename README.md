@@ -2,14 +2,18 @@
 
 CLC 2025 – Cloud-Native Systems Project
 
-This project demonstrates the design, deployment and operation of a
+This project demonstrates the design, deployment, and operation of a
 cloud-native microservices system on Kubernetes.
+
+Click [here](#tutorial) to get directly to the Tutorial.
 
 ## Team Members
 
 * Selina Adlberger
 * Robin Berger
 * Jonas Miesenböck
+
+---
 
 ##  Table of Contents
 1. [Project Overview](#1-project-overview)
@@ -18,11 +22,13 @@ cloud-native microservices system on Kubernetes.
 4. [Observability & Monitoring](#4-observability--monitoring)
 5. [Lessons Learned](#5-lessons-learned)
 
+---
+
 ## 1. Project Overview
 
 This project focuses on designing and operating a cloud-native system on Kubernetes. To provide a realistic foundation, we deployed a minimal microservices-based storage and order management application.
 
-This application serves to demonstrate cloud-native infrastructure concepts rather than feature-complete business logic. The core objective is to design, deploy, and operate a cloud-native architecture that demonstrates key principles such as:
+This application serves to demonstrate cloud-native infrastructure concepts such as:
 - Containerized microservices
 - Automated deployments via Kustomize 
 - Service Discovery & API Gateway patterns 
@@ -30,14 +36,60 @@ This application serves to demonstrate cloud-native infrastructure concepts rath
 
 The system is implemented in **Java with Spring Boot**, containerized using Docker, and orchestrated on **Kubernetes (kind)**.
 
+### Project Structure
+
+````yaml
+clc-project/
+├── .github/
+│   └── workflows/
+│       └── build-and-push.yaml      # Pipeline to build and push images to GH package registry
+├── api-gateway                      # Spring Cloud Gateway (contains frontend)   
+├── docs/                            # Documentation and diagrams
+├── inventory-service                # Spring Boot microservice to store instances of products (counts)
+├── k8s/                             # Kubernetes manifests (Kustomize)
+│   ├── base/                        # Kubernetes manifests for microservices
+│   │   ├── api-gateway/
+│   │   ├── inventory-service/
+│   │   ├── master-data-service/
+│   │   ├── order-service/
+│   │   └── kustomization.yaml
+│   ├── overlays/                    # Additional manifests for deployment (prometheus, grafana)
+│   │   └── dev/
+│   │       ├── prometheus-grafana/
+│   │       └── kustomization.yaml
+│   └── namespace.yaml
+├── master-data-service              # Spring Boot microservice to provide metadata about products
+├── order-service                    # Spring Boot microservice to create orders
+├── pom.xml
+└── README.md
+````
+
+---
+
 ## 2. Architecture & Research
 
 In this section, our research regarding the architectural style and the tooling required to implement a cloud-native system is summarized.
 
-
 ### 2.1. Architectural Decisions (Research)
 
+This project aims to demonstrate a microservice-based system deployed on Kubernetes with basic observability.
 
+1. **Local Kubernetes with kind**
+- **Decision:** Run the cluster locally using kind.
+- **Why:** Cloud credits expired, and a local cluster provides a simple, reproducible setup for showcasing Kubernetes manifests, service discovery, and monitoring.
+- **Trade-offs:** Not production-like (no managed load balancer, limited persistence, and failure simulation).  
+2. **API Gateway entry point**
+- **Decision:** Expose a single gateway service and keep internal services cluster-private.
+- **Why:** Centralizes routing and simplifies client access while keeping service-to-service communication internal.
+- **Trade-offs:** Adds a hop and concentrates risk on the gateway.
+3. **Database-per-service**
+- **Decision:** Each microservice owns its own database.
+- **Why:** Prevents shared-schema coupling and allows services to evolve independently.
+- **Trade-offs:** Cross-service reporting and strong consistency are harder; integration patterns are required.
+4. **Prometheus + Grafana for observability**
+- **Decision:** Deploy Prometheus and Grafana in the dev overlay.
+- **Why:** Enables service-level monitoring and dashboards without external tooling.
+- **Trade-offs:** Metrics are covered first; centralized logs/tracing are not in scope yet.
 
 ### 2.2. High-Level Architecture
 
@@ -49,13 +101,32 @@ In this section, our research regarding the architectural style and the tooling 
 
 
 ### 2.3. Technology Stack & Tooling
-#### Kubernetes
-#### CI/CD
+
+#### Kubernetes (local cluster via kind)
+We deploy the system to a local Kubernetes cluster using **kind** to keep the setup reproducible and independent of cloud credits.
+
+Key Kubernetes resources used:
+- **Namespace isolation:** all resources are deployed into a dedicated namespace.
+- **Deployments:** each microservice is deployed as a `Deployment`.
+    - Replicas: `inventory-service`, `master-data-service`, and `order-service` run with **3 replicas** to demonstrate horizontal scaling and rolling updates.
+    - `api-gateway` runs as the single entry point and can be scaled independently.
+- **Services (ClusterIP):** each microservice is exposed internally via a Kubernetes `Service` to enable stable DNS-based communication (`<service-name>:<port>`).
+- **Database per service:** each microservice has its own database running inside the cluster, deployed as a separate component behind its own Service.
+- **Persistent storage:** database data is persisted using **PersistentVolumeClaims (PVCs)** so that data survives pod restarts.
+- **Environment configuration:** configuration (e.g., database connection parameters) is provided via Kubernetes environment variables and secrets (where applicable).
+- **Configuration management:** manifests are organized using **Kustomize** (`k8s/base` + `k8s/overlays/dev`) to separate reusable base resources from dev-only additions (e.g., monitoring).
+
+#### CI/CD (build & publish)
+We use a lightweight CI pipeline to produce deployable container images:
+- **Continuous Integration:** on commits to the main branch, the pipeline builds the service images.
+- **Container registry:** images are pushed to a container registry to be pulled by the cluster.
+- **Versioning:** images are tagged with the commit SHA to ensure deployments use immutable, traceable artifacts.
+
 
 
 ### 2.4. Implemented System
 
-The system consists of four lightweight microservices, an API Gateway and a minimal frontend.
+The system consists of four lightweight microservices, an API Gateway, and a minimal frontend.
 The services are intentionally simple and serve primarily to demonstrate cloud-native behavior.
 
 #### API Gateway & Frontend
@@ -76,7 +147,9 @@ The services are intentionally simple and serve primarily to demonstrate cloud-n
 - **Tech:** Java, Spring Boot
 - **Role:** Manages stock levels based on orders
 
-## 3. Tutorial: Getting Started
+---
+
+## 3. Tutorial: Getting Started <span id="tutorial"></span>
 
 Follow the following steps to reproduce the environment locally.
 
@@ -89,21 +162,15 @@ Follow the following steps to reproduce the environment locally.
 
 ---
 
-### Step 0 (Optional): Build & Prepare Locally
+### Step 1: Initiating a new build (Optional)
 
 If you want to build the code from source instead of pulling existing images:
 
 ```bash
-# Build Java Artifacts
-./mvnw clean package -DskipTests
-
-# Build Docker Images
-docker build -t ghcr.io/robinb00/api-gateway:latest .
-docker build -t ghcr.io/robinb00/order-service:latest ./order-service
-# ... repeat for other services
+# commit to the main branch, to trigger a new build
 ```
 
-### Step 1: Kubernetes Cluster Setup & Deployment
+### Step 2: Kubernetes Cluster Setup & Deployment
 
 ```bash
 # Create cluster
@@ -114,7 +181,7 @@ kubectl config use-context kind-storage-system
 kubectl apply -f k8s/namespace.yaml
 ```
 
-### Step 2: Deployment
+### Step 3: Deployment
 
 To pull images from the GitHub Container Registry (GHCR), we need to create a secret.
 
@@ -133,7 +200,7 @@ kubectl apply -k k8s/overlays/dev
 ```
 
 
-### Step 3: Verify Deployment
+### Step 4: Verify Deployment
 
 Check if all pods are running:
 
@@ -149,7 +216,7 @@ kubectl port-forward svc/api-gateway 8080:8080 -n storage-system
 
 **Open Application:** http://localhost:8080/index.html
 
-
+---
 
 ## 4. Observability & Monitoring
 
