@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-alerting
+  namespace: storage-system
+data:
+  alerting.yaml: |
+    apiVersion: 1
+
+    contactPoints:
+      - orgId: 1
+        name: Slack-Channel
+        receivers:
+          - uid: slack-notifier
+            type: slack
+            settings:
+              icon_emoji: ':rotating_light:'
+              url: SLACK_WEBHOOK_URL_PLACEHOLDER
+              username: Grafana Bot
+            disableResolveMessage: false
+
+    policies:
+      - orgId: 1
+        receiver: Slack-Channel
+        group_by: ['grafana_folder', 'alertname']
+
+    groups:
+      - orgId: 1
+        name: Fast
+        folder: Demo
+        interval: 10s
+        rules:
+          - uid: high_traffic_alert_rule
+            title: High Traffic Alert
+            condition: C
+            data:
+              - refId: A
+                relativeTimeRange:
+                  from: 600
+                  to: 0
+                datasourceUid: prometheus 
+                model:
+                  editorMode: code
+                  expr: sum(rate(http_server_requests_seconds_count[1m]))
+                  instant: true
+                  intervalMs: 1000
+                  maxDataPoints: 43200
+                  refId: A
+              - refId: C
+                datasourceUid: __expr__
+                model:
+                  conditions:
+                    - evaluator:
+                        params: [10]
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: [C]
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                  datasource:
+                    type: __expr__
+                    uid: __expr__
+                  expression: A
+                  intervalMs: 1000
+                  refId: C
+                  type: threshold
+            noDataState: NoData
+            execErrState: Error
+            for: 10s
+            annotations:
+              summary: "High Traffic Detected"
