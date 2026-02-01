@@ -11,16 +11,12 @@ cloud-native microservices system on Kubernetes.
 * Robin Berger
 * Jonas Miesenböck
 
----
-
 ##  Table of Contents
 1. [Project Overview](#1-project-overview)
 2. [Research & Architecture](#2-architecture--research)
 3. [Tutorial: Getting Started](#3-tutorial-getting-started)
 4. [Observability & Monitoring](#4-observability--monitoring)
 5. [Lessons Learned](#5-lessons-learned)
-
----
 
 ## 1. Project Overview
 
@@ -34,11 +30,9 @@ This application serves to demonstrate cloud-native infrastructure concepts rath
 
 The system is implemented in **Java with Spring Boot**, containerized using Docker, and orchestrated on **Kubernetes (kind)**.
 
----
-
 ## 2. Architecture & Research
 
-In this section, we summarize our research regarding the architectural style and the tooling required to implement a cloud-native system.
+In this section, our research regarding the architectural style and the tooling required to implement a cloud-native system is summarized.
 
 
 ### 2.1. Architectural Decisions (Research)
@@ -56,7 +50,7 @@ In this section, we summarize our research regarding the architectural style and
 
 ### 2.3. Technology Stack & Tooling
 #### Kubernetes
-####  CI/CD
+#### CI/CD
 
 
 ### 2.4. Implemented System
@@ -82,13 +76,9 @@ The services are intentionally simple and serve primarily to demonstrate cloud-n
 - **Tech:** Java, Spring Boot
 - **Role:** Manages stock levels based on orders
 
----
-
 ## 3. Tutorial: Getting Started
 
-Follow these steps to reproduce the environment locally.
-
----
+Follow the following steps to reproduce the environment locally.
 
 ### Prerequisites
 * **Docker Desktop** (running)
@@ -99,7 +89,7 @@ Follow these steps to reproduce the environment locally.
 
 ---
 
-### Step 1: Build & Prepare (Optional)
+### Step 0 (Optional): Build & Prepare Locally
 
 If you want to build the code from source instead of pulling existing images:
 
@@ -113,7 +103,7 @@ docker build -t ghcr.io/robinb00/order-service:latest ./order-service
 # ... repeat for other services
 ```
 
-### Step 2: Kubernetes Cluster Setup & Deployment
+### Step 1: Kubernetes Cluster Setup & Deployment
 
 ```bash
 # Create cluster
@@ -124,7 +114,7 @@ kubectl config use-context kind-storage-system
 kubectl apply -f k8s/namespace.yaml
 ```
 
-### Step 3: Deployment
+### Step 2: Deployment
 
 To pull images from the GitHub Container Registry (GHCR), we need to create a secret.
 
@@ -135,13 +125,15 @@ kubectl create secret docker-registry ghcr-credentials \
   --docker-password=<PAT-TOKEN> \
   --docker-email=<EMAIL> \
   -n storage-system
-  
-# Deploy cluster
+``` 
+
+Deploy the cluster using the following command:
+```bash
 kubectl apply -k k8s/overlays/dev
 ```
 
 
-### Step 4: Verify Deployment
+### Step 3: Verify Deployment
 
 Check if all pods are running:
 
@@ -165,7 +157,7 @@ kubectl port-forward svc/api-gateway 8080:8080 -n storage-system
 
 This stack utilizes [**Prometheus**](https://prometheus.io) for metric collection, paired with [**Grafana**](https://grafana.com) for data visualization and alerting. This combination provides real-time insights into the cluster's performance and health.
 
-* **Prometheus (Database Layer):** Prometheus acts as the storage system's time-series database. It actively scrapes metrics from applications and infrastructure at regular intervals.
+* **Prometheus (Database Layer):** Prometheus acts as the storage system's time-series database. It actively scrapes metrics from applications at regular intervals.
 * **Grafana (Visualization Layer):** While Prometheus is powerful, its native UI is designed for debugging rather than long-term monitoring. Grafana connects to Prometheus as a **Datasource**, querying the metrics and transforming them into easily customizable visualizations. 
 
 ![Prometheus and Grafana Visualization](docs/prometheues_grafana.png)
@@ -176,37 +168,37 @@ To receive notifications in your Slack workspace, update the webhook configurati
 
 1. **Update the Webhook:** Replace the `SLACK_WEBHOOK_URL_PLACEHOLDER` in the [grafana-alerting.yaml](k8s/overlays/dev/prometheus-grafana/grafana-alerting.yaml) file with your desired Slack webhook URL.
 
-```yaml
-# Snippet from grafana-alerting.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: grafana-alerting
-  namespace: storage-system
-data:
-  alerting.yaml: |
-    apiVersion: 1
+    ```yaml
+    # Snippet from grafana-alerting.yaml
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: grafana-alerting
+      namespace: storage-system
+    data:
+      alerting.yaml: |
+        apiVersion: 1
 
-    contactPoints:
-      - orgId: 1
-        name: Slack-Channel
-        receivers:
-          - uid: slack-notifier
-            type: slack
-            settings:
-              icon_emoji: ':rotating_light:'
-              url: SLACK_WEBHOOK_URL_PLACEHOLDER
-              username: Grafana Bot
-            disableResolveMessage: false
-```
+        contactPoints:
+          - orgId: 1
+            name: Slack-Channel
+            receivers:
+              - uid: slack-notifier
+                type: slack
+                settings:
+                  icon_emoji: ':rotating_light:'
+                  url: SLACK_WEBHOOK_URL_PLACEHOLDER
+                  username: Grafana Bot
+                disableResolveMessage: false
+    ```
 2. **Apply and Refresh:** If the cluster is already running, run the following commands to apply the new ConfigMap and restart the Grafana pod to pick up the changes
-```bash
-# Apply cluster configurations
-kubectl apply -k k8s/overlays/dev
+    ```bash
+    # Apply cluster configurations
+    kubectl apply -k k8s/overlays/dev
 
-# Restart Grafana by deleting the existing pod
-kubectl delete pod -l app=grafana -n storage-system
-```
+    # Restart Grafana by deleting the existing pod
+    kubectl delete pod -l app=grafana -n storage-system
+    ```
 
 ### Accessing the Web Interfaces
 To access the dashboards locally, you must forward the service ports:
@@ -229,7 +221,7 @@ If the port forwarding is set up correctly, you can access the web interfaces vi
 
 The Prometheus UI is a tool for ad-hoc queries and verifying that metrics are being collected correctly.
 
-If you go to `Status > Target heatlh`, you can see every endpoint that Prometheus is trying to scrape and the connection status.
+If you go to `Status > Target health`, you can see every endpoint that Prometheus is trying to scrape and the connection status.
 
 ![alt text](docs/target_health.png)
 
