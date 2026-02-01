@@ -157,33 +157,18 @@ kubectl port-forward svc/api-gateway 8080:8080 -n storage-system
 
 **Open Application:** http://localhost:8080/index.html
 
----
+
 
 ## 4. Observability & Monitoring
 
 ### Technology Stack
 
-This stack utilizes [**Prometheus**](https://prometheus.io) for metric collection, paired with [**Grafana**](https://grafana.com) for data visualization, and alerting. This combination provides real-time insights into the cluster's performance and health.
+This stack utilizes [**Prometheus**](https://prometheus.io) for metric collection, paired with [**Grafana**](https://grafana.com) for data visualization and alerting. This combination provides real-time insights into the cluster's performance and health.
 
 * **Prometheus (Database Layer):** Prometheus acts as the storage system's time-series database. It actively scrapes metrics from applications and infrastructure at regular intervals.
-* **Grafana (Visualization Layer):** While Prometheus is powerful, its native UI is designed for debugging rather than long-term monitoring. Grafana connects to Prometheus as a **Data Source**, querying the metrics and transforming raw numbers into easily customizable visualizations. 
+* **Grafana (Visualization Layer):** While Prometheus is powerful, its native UI is designed for debugging rather than long-term monitoring. Grafana connects to Prometheus as a **Datasource**, querying the metrics and transforming them into easily customizable visualizations. 
 
-### Accessing the Web Interfaces
-To access the dashboards locally, you must forward the service ports:
-
-```bash
-# Forward Prometheus to localhost:9090
-kubectl port-forward svc/prometheus -n storage-system 9090:9090
-
-# Forward Grafana to localhost:3000
-kubectl port-forward svc/grafana -n storage-system 3000:3000
-```
-
-If the port forwarding is set up correctly, you can access the web interfaces via the URLs below.
-
-**Prometheus URL**: http://localhost:9000
-
-**Grafana URL**: http://localhost:3000
+![Prometheus and Grafana Visualization](docs/prometheues_grafana.png)
 
 ### Configuring Slack Alerts (Optional)
 
@@ -223,26 +208,98 @@ kubectl apply -k k8s/overlays/dev
 kubectl delete pod -l app=grafana -n storage-system
 ```
 
+### Accessing the Web Interfaces
+To access the dashboards locally, you must forward the service ports:
+
+```bash
+# Forward Prometheus to localhost:9090
+kubectl port-forward svc/prometheus -n storage-system 9090:9090
+
+# Forward Grafana to localhost:3000
+kubectl port-forward svc/grafana -n storage-system 3000:3000
+```
+
+If the port forwarding is set up correctly, you can access the web interfaces via the URLs below.
+
+**Prometheus URL**: http://localhost:9000
+
+**Grafana URL**: http://localhost:3000
+
 ### Prometheus Web Interface
 
-The Prometheus UI is your primary tool for ad-hoc queries and verifying that metrics are being collected correctly.
+The Prometheus UI is a tool for ad-hoc queries and verifying that metrics are being collected correctly.
 
-Graph/Expression Tab: Use this to write PromQL (Prometheus Query Language) queries. For example, typing up will show you which targets are currently being monitored.
+If you go to `Status > Target heatlh`, you can see every endpoint that Prometheus is trying to scrape and the connection status.
 
-Status > Targets: This is a crucial page for troubleshooting. It shows every endpoint Prometheus is trying to scrape and whether the connection is "UP" or "DOWN."
+![alt text](docs/target_health.png)
 
-Alerts: Displays all configured alerting rules and their current state (Inactive, Pending, or Firing).
+After you made sure that every application shows up there, you can go to the `Query` tab, where you can write PromQL (Prometheus Query Language) queries and display the results either in table or graph view.
+
+#### Example PromQL Queries
+
+1. Health Check
+   
+    ```
+    up
+    ```
+    ![PromQL Query](docs/promql_1.png)
+
+2. Requests per second averaged over the last minute
+
+    ```
+    sum by (job) (rate(http_server_requests_seconds_count[1m]))
+    ```
+    ![PromQL Query](docs/promql_2.png)
+
+3. Total amount of Heap Memory used by each application in Megabytes
+    
+    ```
+    sum(jvm_memory_used_bytes{area="heap"}) by (application) / 1024 / 1024
+    ```
+    ![PromQL Query](docs/promql_3.png)
+
+
 
 ### Grafana Web Interface
 
-Grafana is where you will spend most of your time observing the health of the storage system through visual dashboards.
 
-Dashboards: Navigate to the "Dashboards" section to view pre-configured visualizations. These dashboards pull data from Prometheus and display it in real-time.
+Grafana is where the health of the storage system can be observed through visual dashboards.
 
-Data Sources: Under "Connections," you will find Prometheus listed as the primary data source. This connection is pre-configured via the deployment manifests.
+The first time you open the Grafana web interface, it will prompt you to sign in. You can find the credentials in the [grafana-deployment.yaml](k8s/overlays/dev/prometheus-grafana/grafana-deployment.yaml) file.
 
-Alerting: While Prometheus evaluates the math behind alerts, Grafana manages the human side—routing those alerts to Slack, Email, or PagerDuty.
+![Grafana Login](docs/grafana_login.png)
 
+**Dashboards**: Navigate to the "Dashboards" section to view pre-configured visualizations. These dashboards pull data from Prometheus and display it in real-time.
+
+#### **Prometheus Dashboard**
+
+This dashboard is based on the [Prometheus 2.0 Stats Dashboard](https://grafana.com/grafana/dashboards/15489-prometheus-2-0-stats/). It provides monitoring for Prometheus itself, allowing tracking of the total incoming traffic, storage resource usage, and the duration of scrape loops.
+
+![Prometheus Dashboard](docs/prometheus_dashboard.png)
+
+#### **Spring Boot Monitoring Dashboard**
+
+This dashboard is based on the [Spring Boot 2.1 System Monitor](https://grafana.com/grafana/dashboards/11378-justai-system-monitor/). It provides a comprehensive view of the internal health of the Java applications. You can switch between the different applications and their instances at the top left of the dashboard. Visualizations include HTTP Codes frequency, request frequency and latency, heap memory usage, garbage collection patterns, and active thread counts.
+
+![Spring Boot Monitoring Dashboard](docs/spring_boot_dashboard.png)
+
+#### **Alerting**
+
+A predefined alert rule (High Traffic Alert) can be seen under `Alerting > Alert rules`. The rule is triggered if more than `10` requests per second averaged over the last minute of total incoming traffic are registered. If the rule is triggered, it will display an alert in the Grafana web interface and also send a notification to Slack if the webhook URL is set up.
+
+![Grafana Alerting](docs/alerting.png)
+
+### Simulating Traffic (Optional)
+
+To verify that Prometheus is actively scraping metrics and that your dashboards are updating, you can simulate traffic to the application. 
+
+Run the following command in a PowerShell terminal to send continuous requests to the application's actuator endpoint, thereby simulating read activity:
+
+```powershell
+while ($true) { curl.exe -s -o NUL http://localhost:8080/actuator/health }
+```
+
+This command sends requests in an infinite loop as fast as your machine can process them to the `/actuator/health` endpoint and should also trigger the alert rule, which will then send a Slack notification if you chose to set up the webhook.
 
 ## 5. Lessons Learned
 During the transition from local development to a cloud-native Kubernetes environment, we encountered and solved several key challenges:
