@@ -303,3 +303,6 @@ This command sends requests in an infinite loop as fast as your machine can proc
 
 ## 5. Lessons Learned
 During the transition from local development to a cloud-native Kubernetes environment, we encountered and solved several key challenges:
+- Kubernetes "Out of the Box" Capabilities: We learned that Kubernetes handles complex deployment strategies without requiring external scripts.
+   - **Internal Routing (DNS)**: We did not need to manage IP addresses manually. Kubernetes DNS allowed our microservices to communicate simply by using their service names (e.g., http://order-service), streamlining the architecture significantly.
+   - **Rolling Updates**: We observed that Kubernetes automatically manages updates by gradually replacing old Pods with new ones. This ensures zero downtime during deployments, a feature that would require complex configuration in a non-containerized environment.
