@@ -9,6 +9,7 @@ resources:
 - prometheus-grafana/grafana-provisioning.yaml
 - prometheus-grafana/grafana-dashboards.yaml
 - prometheus-grafana/grafana-dashboard-provider.yaml
+- prometheus-grafana/grafana-alerting.yaml
 
 images:
 - name: ghcr.io/robinb00/api-gateway
