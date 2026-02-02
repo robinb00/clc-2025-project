@@ -349,7 +349,7 @@ A predefined alert rule (High Traffic Alert) can be seen under `Alerting > Alert
 ![Grafana Alerting](docs/alerting.png)
 
 ### Simulating Traffic (Optional)
-
+ 
 To verify that Prometheus is actively scraping metrics and that your dashboards are updating, you can simulate traffic to the application. 
 
 Run the following command in a PowerShell terminal to send continuous requests to the application's actuator endpoint, thereby simulating read activity:
